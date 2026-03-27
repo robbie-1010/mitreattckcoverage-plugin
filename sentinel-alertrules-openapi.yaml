@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: Microsoft Sentinel Analytics Rules API
+  description: >-
+    Retrieves Sentinel analytics rule definitions from Azure Resource Manager.
+    Returns all rules regardless of alert firing history, including ATT&CK
+    tactic and technique mappings configured in the rule editor.
+  version: 2023-02-01
+servers:
+  - url: https://management.azure.com
+paths:
+  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules:
+    get:
+      operationId: listAlertRules
+      summary: List all Sentinel analytics rule definitions
+      description: >-
+        Returns all analytics rule definitions in the specified Sentinel
+        workspace. Includes ATT&CK tactics and techniques as configured
+        in the rule editor, enabled state, and last modified timestamp.
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Azure subscription ID containing the Sentinel workspace.
+        - name: resourceGroupName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Resource group name containing the Sentinel workspace.
+        - name: workspaceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Log Analytics workspace name.
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "2023-02-01"
+          description: API version.
+        - name: $top
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Maximum number of results to return in a single page.
+      responses:
+        '200':
+          description: Successfully retrieved analytics rule definitions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Full resource ID of the rule.
+                        name:
+                          type: string
+                          description: Rule GUID (RuleId).
+                        kind:
+                          type: string
+                          description: Rule type (e.g., Scheduled, NRT, Fusion).
+                        properties:
+                          type: object
+                          properties:
+                            displayName:
+                              type: string
+                              description: Human-readable rule name.
+                            description:
+                              type: string
+                            enabled:
+                              type: boolean
+                              description: Whether the rule is currently enabled.
+                            tactics:
+                              type: array
+                              items:
+                                type: string
+                              description: ATT&CK tactics mapped to this rule.
+                            techniques:
+                              type: array
+                              items:
+                                type: string
+                              description: ATT&CK technique IDs mapped to this rule.
+                            lastModifiedUtc:
+                              type: string
+                              format: date-time
+                              description: Timestamp of last rule modification.
+                            severity:
+                              type: string
+                              description: Alert severity (High/Medium/Low/Informational).
+        '401':
+          description: Unauthorized. Verify OAuthClientCredentialsFlow credentials and ARM permissions.
+        '403':
+          description: Forbidden. Identity lacks Microsoft Sentinel Reader role on the workspace.
+        '404':
+          description: Workspace not found. Verify subscriptionId, resourceGroupName, and workspaceName.
