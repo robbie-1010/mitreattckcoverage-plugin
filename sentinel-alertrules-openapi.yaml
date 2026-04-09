@@ -1,18 +1,20 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
   title: Microsoft Sentinel Analytics Rules API
   description: >-
     Retrieves Sentinel analytics rule definitions from Azure Resource Manager.
     Returns all rules regardless of alert firing history, including ATT&CK
     tactic and technique mappings configured in the rule editor.
-  version: 2023-02-01
+  version: 1.0.0
 servers:
   - url: https://management.azure.com
 paths:
   /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules:
     get:
-      operationId: listAlertRules
-      summary: List all Sentinel analytics rule definitions
+      tags:
+        - Sentinel Rules
+      operationId: getListAlertRules
+      summary: Get the List of all Sentinel analytics rule definitions
       description: >-
         Returns all analytics rule definitions in the specified Sentinel
         workspace. Includes ATT&CK tactics and techniques as configured
@@ -41,7 +43,7 @@ paths:
           required: true
           schema:
             type: string
-            default: "2023-02-01"
+            default: "2025-06-01"
           description: API version.
         - name: $top
           in: query
@@ -61,6 +63,8 @@ paths:
                     type: array
                     items:
                       type: object
+                      title: SentinelAnalyticsRulePlugin
+                      description: A Microsoft Sentinel analytics rule
                       properties:
                         id:
                           type: string
@@ -99,6 +103,9 @@ paths:
                             severity:
                               type: string
                               description: Alert severity (High/Medium/Low/Informational).
+                  "@odata.nextLink":
+                    type: string
+                    description: URL to retrieve the next page of results, if available.
         '401':
           description: Unauthorized. Verify OAuthClientCredentialsFlow credentials and ARM permissions.
         '403':
