@@ -52,57 +52,45 @@ paths:
             type: integer
           description: Maximum number of results to return in a single page.
       responses:
-        '200':
-          description: Successfully retrieved analytics rule definitions.
-          content:
-            application/json:
-              schema:
+  '200':
+    description: Successfully retrieved analytics rule definitions.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            value:
+              type: array
+              items:
                 type: object
                 properties:
-                  value:
-                    type: array
-                    items:
-                      type: object
-                      title: SentinelAnalyticsRulePlugin
-                      description: A Microsoft Sentinel analytics rule
-                      properties:
-                        id:
-                          type: string
-                          description: Full resource ID of the rule.
-                        name:
-                          type: string
-                          description: Rule GUID (RuleId).
-                        kind:
-                          type: string
-                          description: Rule type (e.g., Scheduled, NRT, Fusion).
-                        properties:
-                          type: object
-                          properties:
-                            displayName:
-                              type: string
-                              description: Human-readable rule name.
-                            description:
-                              type: string
-                            enabled:
-                              type: boolean
-                              description: Whether the rule is currently enabled.
-                            tactics:
-                              type: array
-                              items:
-                                type: string
-                              description: ATT&CK tactics mapped to this rule.
-                            techniques:
-                              type: array
-                              items:
-                                type: string
-                              description: ATT&CK technique IDs mapped to this rule.
-                            lastModifiedUtc:
-                              type: string
-                              format: date-time
-                              description: Timestamp of last rule modification.
-                            severity:
-                              type: string
-                              description: Alert severity (High/Medium/Low/Informational).
+                  id:
+                    type: string
+                    description: Full resource ID of the rule.
+                  name:
+                    type: string
+                    description: Rule GUID (RuleId).
+                  kind:
+                    type: string
+                    description: Rule type (e.g., Scheduled, NRT, Fusion).
+                  displayName:
+                    type: string
+                    description: Human-readable rule name.
+                  enabled:
+                    type: boolean
+                    description: Whether the rule is currently enabled.
+                  tactics:
+                    type: string
+                    description: ATT&CK tactics mapped to this rule.
+                  techniques:
+                    type: string
+                    description: ATT&CK technique IDs mapped to this rule.
+                  lastModifiedUtc:
+                    type: string
+                    description: Timestamp of last rule modification.
+                  severity:
+                    type: string
+                    description: Alert severity.
                   "@odata.nextLink":
                     type: string
                     description: URL to retrieve the next page of results, if available.
