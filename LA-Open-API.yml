@@ -1,0 +1,109 @@
+openapi: 3.0.1
+info:
+  title: Sentinel Alert Rules via Logic App LogicApp
+  description: >-
+    Retrieves Sentinel analytics rule definitions from Azure Resource Manager
+    via a Logic App proxy. Returns all rules regardless of alert firing history,
+    including ATT&CK tactic and technique mappings.
+  version: 1.0.0
+servers:
+  - url: https://prod-48.eastus.logic.azure.com
+paths:
+  /workflows/56b7658dca854c8692095774960fa939/triggers/manual/paths/invoke:
+    post:
+      operationId: getListAlertRulesLogicApp
+      summary: Get all Sentinel analytics rule definitions via Logic App
+      description: >-
+        Calls the Logic App which retrieves all analytics rule definitions
+        from the specified Sentinel workspace via ARM API.
+      parameters:
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "2016-10-01"
+        - name: sp
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "/triggers/manual/run"
+        - name: sv
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "1.0"
+        - name: sig
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "<your-sig-value>"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - subscriptionId
+                - resourceGroupName
+                - workspaceName
+                - tenantId
+                - clientId
+                - clientSecret
+              properties:
+                subscriptionId:
+                  type: string
+                  description: Azure subscription ID
+                resourceGroupName:
+                  type: string
+                  description: Resource group name
+                workspaceName:
+                  type: string
+                  description: Log Analytics workspace name
+                tenantId:
+                  type: string
+                  description: Azure tenant ID
+                clientId:
+                  type: string
+                  description: App registration client ID
+                clientSecret:
+                  type: string
+                  description: App registration client secret
+                top:
+                  type: string
+                  description: Maximum number of rules to return
+      responses:
+        '200':
+          description: Successfully retrieved analytics rule definitions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        kind:
+                          type: string
+                        displayName:
+                          type: string
+                        enabled:
+                          type: boolean
+                        tactics:
+                          type: string
+                        techniques:
+                          type: string
+                        severity:
+                          type: string
+        '500':
+          description: Logic App execution failed.
