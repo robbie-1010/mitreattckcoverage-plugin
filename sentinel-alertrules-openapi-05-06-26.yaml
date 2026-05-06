@@ -1,0 +1,119 @@
+openapi: 3.0.1
+info:
+  title: Microsoft Sentinel Analytics Rules API
+  description: Retrieves Sentinel analytics rules with ATT&CK tactic and technique mappings for coverage analysis.
+  version: 1.0.0
+servers:
+  - url: https://management.azure.com
+paths:
+  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules:
+    get:
+      tags:
+        - Sentinel Rules
+      operationId: getListAlertRules
+      summary: List all Sentinel analytics rules with ATT&CK mappings
+      description: Returns analytics rules with tactics, techniques, severity, and enabled state for MITRE ATT&CK coverage analysis.
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Azure subscription ID containing the Sentinel workspace.
+        - name: resourceGroupName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Resource group name containing the Sentinel workspace.
+        - name: workspaceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Log Analytics workspace name.
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "2025-06-01"
+          description: API version.
+        - name: $top
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Maximum number of results to return in a single page.
+      responses:
+        '200':
+          description: Successfully retrieved analytics rule definitions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      title: SentinelAnalyticsRulePlugin
+                      description: A Microsoft Sentinel analytics rule
+                      properties:
+                        id:
+                          type: string
+                          description: Full resource ID of the rule.
+                        name:
+                          type: string
+                          description: Rule GUID (RuleId).
+                        kind:
+                          type: string
+                          description: Rule type (e.g., Scheduled, NRT, Fusion).
+                        properties:
+                          type: object
+                          properties:
+                            displayName:
+                              type: string
+                              description: Human-readable rule name.
+                            description:
+                              type: string
+                            enabled:
+                              type: boolean
+                              description: Whether the rule is currently enabled.
+                            tactics:
+                              type: array
+                              items:
+                                type: string
+                              description: ATT&CK tactics mapped to this rule.
+                            techniques:
+                              type: array
+                              items:
+                                type: string
+                              description: ATT&CK technique IDs mapped to this rule.
+                            lastModifiedUtc:
+                              type: string
+                              format: date-time
+                              description: Timestamp of last rule modification.
+                            severity:
+                              type: string
+                              description: Alert severity (High/Medium/Low/Informational).
+                  "@odata.nextLink":
+                    type: string
+                    description: URL to retrieve the next page of results, if available.
+        '401':
+          description: Unauthorized. Verify OAuthClientCredentialsFlow credentials and ARM permissions.
+        '403':
+          description: Forbidden. Identity lacks Microsoft Sentinel Reader role on the workspace.
+        '404':
+          description: Workspace not found. Verify subscriptionId, resourceGroupName, and workspaceName.
+      security:
+        - azure_auth: []
+components:
+  securitySchemes:
+    azure_auth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/c646f0a4-4a54-4072-92a7-e4c57f5e6702/oauth2/v2.0/token
+          scopes:
+            https://management.azure.com/.default: Access Azure Management API
