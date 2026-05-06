@@ -60,26 +60,18 @@ paths:
                       title: SentinelAnalyticsRulePlugin
                       description: A Microsoft Sentinel analytics rule
                       properties:
-                        id:
-                          type: string
-                          description: Full resource ID of the rule.
-                        name:
-                          type: string
-                          description: Rule GUID (RuleId).
-                        kind:
-                          type: string
-                          description: Rule type (e.g., Scheduled, NRT, Fusion).
                         properties:
                           type: object
                           properties:
                             displayName:
                               type: string
                               description: Human-readable rule name.
-                            description:
-                              type: string
                             enabled:
                               type: boolean
                               description: Whether the rule is currently enabled.
+                            severity:
+                              type: string
+                              description: Alert severity (High/Medium/Low/Informational).
                             tactics:
                               type: array
                               items:
@@ -90,13 +82,6 @@ paths:
                               items:
                                 type: string
                               description: ATT&CK technique IDs mapped to this rule.
-                            lastModifiedUtc:
-                              type: string
-                              format: date-time
-                              description: Timestamp of last rule modification.
-                            severity:
-                              type: string
-                              description: Alert severity (High/Medium/Low/Informational).
                   "@odata.nextLink":
                     type: string
                     description: URL to retrieve the next page of results, if available.
